@@ -46,17 +46,14 @@ def parse_move(moves_dict, pgn, current_move, white_move):
 
     if white_move:
         # Find current move by white
-        m = re.search(str(current_move)+r"\. [a-z, A-Z, 1-9, +, #, =, -]+ {", pgn)
+        m = re.search(str(current_move)+r"\. (?P<move>[a-z, A-Z, 1-9, +, #, =, -]+) {", pgn)
     else:
         # Find current move by black
-        m = re.search(str(current_move)+r"\.\.\. [a-z, A-Z, 1-9, +, #, =, -]+ {", pgn)
+        m = re.search(str(current_move)+r"\.\.\. (?P<move>[a-z, A-Z, 1-9, +, #, =, -]+) {", pgn)
 
     # Check if a move was played in this position
     if m is not None:
-        if white_move:
-            move = m.group(0)[len(str(current_move)) + 2:-2]
-        else:
-            move = m.group(0)[len(str(current_move)) + 4:-2]
+        move = m.group("move")
 
         if move in moves_dict:
             moves_dict[move]["count"] += 1
