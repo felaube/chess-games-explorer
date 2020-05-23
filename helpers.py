@@ -29,8 +29,19 @@ def parse_pgn(moves_dict, pgn, current_move=1):
     current_dict = moves_dict
     white_move = True
 
+    m = re.search(r"\[Result \"(?P<result>[1, /, 2, 0]+-[1, /, 2, 0]+)\"]", pgn)
+    result = m.group("result")
+
+    if result == "1-0":
+        result = 1
+    elif result == "0-1":
+        result = 0
+    else:
+        # It was a draw
+        result = 0.5
+
     while True:
-        current_dict = parse_move(current_dict, pgn, current_move, white_move)
+        current_dict = parse_move(current_dict, pgn, current_move, white_move, result)
 
         if current_dict is not None:
             if not white_move:
@@ -42,7 +53,7 @@ def parse_pgn(moves_dict, pgn, current_move=1):
             break
 
 
-def parse_move(moves_dict, pgn, current_move, white_move):
+def parse_move(moves_dict, pgn, current_move, white_move, result):
 
     if white_move:
         # Find current move by white
@@ -57,10 +68,28 @@ def parse_move(moves_dict, pgn, current_move, white_move):
 
         if move in moves_dict:
             moves_dict[move]["count"] += 1
+            if result == 1:
+                moves_dict[move]["white_wins"] += 1
+            elif result == 0:
+                moves_dict[move]["black_wins"] += 1
         else:
-            moves_dict[move] = {"count": 1}
+            if result == 1:
+                moves_dict[move] = {"count": 1, "white_wins": 1, "black_wins": 0}
+            elif result == 0:
+                moves_dict[move] = {"count": 1, "white_wins": 0, "black_wins": 1}
+            else:
+                moves_dict[move] = {"count": 1, "white_wins": 0, "black_wins": 0}
 
         return moves_dict[move]
 
     else:
         return None
+
+
+def calculate_percentages(moves_dict):
+    for move in moves_dict:
+        if move not in ["count", "white_wins", "black_wins", "white_percentage", "black_percentage", "draw_percentage"]:
+            moves_dict[move]["white_percentage"] = round((moves_dict[move]["white_wins"] / moves_dict[move]["count"])*100)
+            moves_dict[move]["black_percentage"] = round((moves_dict[move]["black_wins"] / moves_dict[move]["count"])*100)
+            moves_dict[move]["draw_percentage"] = 100 - moves_dict[move]["white_percentage"] - moves_dict[move]["black_percentage"]
+            calculate_percentages(moves_dict[move])

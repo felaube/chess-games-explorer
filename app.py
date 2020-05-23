@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_session import Session
 from tempfile import mkdtemp
-from helpers import get_archives_list, parse_pgn
+from helpers import get_archives_list, parse_pgn, calculate_percentages
 import requests
 
 # Configure application
@@ -35,6 +35,8 @@ def index():
                     pgn = game["pgn"]
 
                     parse_pgn(moves_history, pgn)
+
+            calculate_percentages(moves_history)
 
             return moves_history
 
