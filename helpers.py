@@ -29,6 +29,7 @@ def parse_pgn(moves_dict, pgn, current_move=1):
     current_dict = moves_dict
     white_move = True
 
+    # Get result of the game to calculate the winning percentage later
     m = re.search(r"\[Result \"(?P<result>[1, /, 2, 0]+-[1, /, 2, 0]+)\"]", pgn)
     result = m.group("result")
 
@@ -40,10 +41,12 @@ def parse_pgn(moves_dict, pgn, current_move=1):
         # It was a draw
         result = 0.5
 
+    # Parse one move at a time iteratively
     while True:
         current_dict = parse_move(current_dict, pgn, current_move, white_move, result)
 
         if current_dict is not None:
+            # Update current move and white/black move variable
             if not white_move:
                 current_move += 1
 
@@ -66,7 +69,7 @@ def parse_move(moves_dict, pgn, current_move, white_move, result):
     if m is not None:
         move = m.group("move")
 
-        if move in moves_dict:
+        if move in moves_dict["next_moves"]:
             moves_dict[move]["count"] += 1
             if result == 1:
                 moves_dict[move]["white_wins"] += 1
@@ -83,6 +86,7 @@ def parse_move(moves_dict, pgn, current_move, white_move, result):
         return moves_dict[move]
 
     else:
+        # No move was played in this position - the game ended here
         return None
 
 

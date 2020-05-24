@@ -17,8 +17,10 @@ Session(app)
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
+        # Render home page
         return render_template("index.html")
     if request.method == "POST":
+        # Get information from form and set up the explorer
         username = request.form.get("username")
 
         archives_list = get_archives_list(username)
@@ -32,6 +34,7 @@ def index():
                 games = response["games"]
 
                 for game in games:
+                    # Parse each game from the archive
                     pgn = game["pgn"]
 
                     parse_pgn(moves_history, pgn)
