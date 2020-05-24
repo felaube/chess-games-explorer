@@ -70,20 +70,20 @@ def parse_move(moves_dict, pgn, current_move, white_move, result):
         move = m.group("move")
 
         if move in moves_dict["next_moves"]:
-            moves_dict[move]["count"] += 1
+            moves_dict["next_moves"][move]["count"] += 1
             if result == 1:
-                moves_dict[move]["white_wins"] += 1
+                moves_dict["next_moves"][move]["white_wins"] += 1
             elif result == 0:
-                moves_dict[move]["black_wins"] += 1
+                moves_dict["next_moves"][move]["black_wins"] += 1
         else:
             if result == 1:
-                moves_dict[move] = {"count": 1, "white_wins": 1, "black_wins": 0}
+                moves_dict["next_moves"][move] = {"count": 1, "white_wins": 1, "black_wins": 0, "next_moves": {}}
             elif result == 0:
-                moves_dict[move] = {"count": 1, "white_wins": 0, "black_wins": 1}
+                moves_dict["next_moves"][move] = {"count": 1, "white_wins": 0, "black_wins": 1, "next_moves": {}}
             else:
-                moves_dict[move] = {"count": 1, "white_wins": 0, "black_wins": 0}
+                moves_dict["next_moves"][move] = {"count": 1, "white_wins": 0, "black_wins": 0, "next_moves": {}}
 
-        return moves_dict[move]
+        return moves_dict["next_moves"][move]
 
     else:
         # No move was played in this position - the game ended here
@@ -91,9 +91,18 @@ def parse_move(moves_dict, pgn, current_move, white_move, result):
 
 
 def calculate_percentages(moves_dict):
-    for move in moves_dict:
-        if move not in ["count", "white_wins", "black_wins", "white_percentage", "black_percentage", "draw_percentage"]:
-            moves_dict[move]["white_percentage"] = round((moves_dict[move]["white_wins"] / moves_dict[move]["count"])*100)
-            moves_dict[move]["black_percentage"] = round((moves_dict[move]["black_wins"] / moves_dict[move]["count"])*100)
-            moves_dict[move]["draw_percentage"] = 100 - moves_dict[move]["white_percentage"] - moves_dict[move]["black_percentage"]
-            calculate_percentages(moves_dict[move])
+    for move in moves_dict["next_moves"]:
+        # Declare aux_dict only to shorten lines
+        aux_dict = moves_dict["next_moves"][move]
+
+        aux_dict["white_percentage"] = round(aux_dict["white_wins"] /
+                                             aux_dict["count"]*100)
+
+        aux_dict["black_percentage"] = round(aux_dict["black_wins"] /
+                                             aux_dict["count"]*100)
+
+        aux_dict["draw_percentage"] = 100 - (aux_dict["white_percentage"] +
+                                             aux_dict["black_percentage"])
+
+        # Iterate recursively through all positions
+        calculate_percentages(aux_dict)

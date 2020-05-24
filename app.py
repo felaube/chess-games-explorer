@@ -26,7 +26,7 @@ def index():
         archives_list = get_archives_list(username)
 
         if archives_list is not None:
-            moves_history = dict()
+            moves_history = {"next_moves": {}}
             for url in archives_list:
                 response = requests.get(url)
                 response = response.json()
