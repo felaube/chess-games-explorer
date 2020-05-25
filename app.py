@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 from tempfile import mkdtemp
-from helpers import get_archives_list, parse_pgn, calculate_percentages
+from helpers import get_archives_list, parse_pgn, calculate_percentages, order_dict
 import requests
 
 # Configure application
@@ -11,12 +11,14 @@ app = Flask(__name__)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 Session(app)
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
+        session.clear()
         # Render home page
         return render_template("index.html")
     if request.method == "POST":
@@ -41,7 +43,8 @@ def index():
 
             calculate_percentages(moves_history)
 
-            # return moves_history["next_moves"]
+            moves_history = order_dict(moves_history)
+
             return render_template("explorer.html", moves=moves_history["next_moves"])
 
         else:

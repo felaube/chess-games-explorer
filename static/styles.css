@@ -1,8 +1,19 @@
-p .move
+.move
 {
-    white-space: nowrap;
     width: 5.5rem;
     float: left;
+}
+
+.move-count
+{
+    width: 4rem;
+    float: right;
+}
+
+.progress
+{
+    /* Override default */
+    background-color: white;
 }
 
 percentage-bar
