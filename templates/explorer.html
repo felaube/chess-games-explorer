@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+    <ul>
+        {% for move in moves %}
+
+            <li>
+                <div class="progress">
+                    <span class="move">{{ move }}</span>
+                    <span>{{ moves[move]["count"] }}</span>
+                    <div class="progress-bar percentage-bar" role="progressbar" style="width: {{ moves[move]["white_percentage"] | string + "%" }} ;" aria-valuenow={{ moves[move]["white_percentage"]|string }} aria-valuemin="0" aria-valuemax={{ moves[move]["white_percentage"] | string }}>{{ moves[move]["white_percentage"] | string + "%" }}</div>
+                </div>
+            </li>
+
+        {% endfor %}
+
+    </ul>
+{% endblock %}

@@ -41,7 +41,8 @@ def index():
 
             calculate_percentages(moves_history)
 
-            return moves_history
+            # return moves_history["next_moves"]
+            return render_template("explorer.html", moves=moves_history["next_moves"])
 
         else:
             return redirect("/")

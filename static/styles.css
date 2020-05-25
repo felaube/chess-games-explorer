@@ -1,0 +1,11 @@
+p .move
+{
+    white-space: nowrap;
+    width: 5.5rem;
+    float: left;
+}
+
+percentage-bar
+{
+    float: right;
+}
