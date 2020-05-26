@@ -5,18 +5,30 @@
 {% endblock %}
 
 {% block main %}
-    <ul>
-        {% for move in moves %}
+    <div id="myBoard" style="width: 400px"></div>
+    <script>
+        var board = Chessboard('myBoard', 'start')
+    </script>
+    <div class="container">
+        <ul>
+            {% for move in moves %}
+                {# Create variables to shorten statements #}
+                {% set white_percentage = moves[move]["white_percentage"] | string %}
+                {% set draw_percentage = moves[move]["draw_percentage"] | string %}
+                {% set black_percentage = moves[move]["black_percentage"] | string %}
 
-            <li>
-                <div class="progress">
-                    <span class="move">{{ move }}</span>
-                    <span class="move-count">{{ moves[move]["count"] }}</span>
-                    <div class="progress-bar percentage-bar" role="progressbar" style="width: {{ moves[move]["white_percentage"] | string + "%" }} ;" aria-valuenow={{ moves[move]["white_percentage"]|string }} aria-valuemin="0" aria-valuemax={{ moves[move]["white_percentage"] | string }}>{{ moves[move]["white_percentage"] | string + "%" }}</div>
-                </div>
-            </li>
+                <li>
+                    <div class="progress">
+                        <span class="move">{{ move }}</span>
+                        <span class="move-count">{{ moves[move]["count"] }}</span>
+                        <div class="progress-bar percentage-bar bar-white" role="progressbar" style="width: {{ white_percentage + "%" }} ;" aria-valuenow={{ white_percentage }} aria-valuemin="0" aria-valuemax={{ white_percentage }}>{{ white_percentage + "%" }}</div>
+                        <div class="progress-bar percentage-bar bar-draw" role="progressbar" style="width: {{ draw_percentage + "%" }} ;" aria-valuenow={{ draw_percentage }} aria-valuemin="0" aria-valuemax={{ draw_percentage }}>{{ draw_percentage + "%" }}</div>
+                        <div class="progress-bar percentage-bar bar-black" role="progressbar" style="width: {{ black_percentage + "%" }} ;" aria-valuenow={{ black_percentage }} aria-valuemin="0" aria-valuemax={{ black_percentage }}>{{ black_percentage + "%" }}</div>
+                    </div>
+                </li>
 
-        {% endfor %}
+            {% endfor %}
 
-    </ul>
+        </ul>
+    </div>
 {% endblock %}

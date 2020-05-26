@@ -2,21 +2,41 @@
 {
     width: 5.5rem;
     float: left;
+    color: hsla(0,0%,100%,.65);
 }
 
 .move-count
 {
     width: 4rem;
     float: right;
+    color: hsla(0,0%,100%,.4);
 }
 
 .progress
 {
-    /* Override default */
-    background-color: white;
+    background-color: inherit;
 }
 
-percentage-bar
+.bar-white
 {
-    float: right;
+    background-color: #dbd9d7;
+    color: #8c8a88;
+}
+
+.bar-draw
+{
+    background-color: #777574;
+    color: #bfbeba;
+}
+
+.bar-black
+{
+    background-color: #312e2b;
+    color: #8c8a88;
+}
+
+.container
+{
+    background-color: rgba(0,0,0,.2);
+    border-color: rgba(0,0,0,.3);   
 }
