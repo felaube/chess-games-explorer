@@ -1,3 +1,8 @@
+body
+{
+    background-color: rgba(39,37,34,1);
+}
+
 .move
 {
     width: 5.5rem;
@@ -37,6 +42,11 @@
 
 .container
 {
-    background-color: rgba(0,0,0,.2);
-    border-color: rgba(0,0,0,.3);   
+    background-color: rgba(39,37,34,1);
+    border-color: rgba(0,0,0,.3); 
+}
+
+.board-container
+{
+    text-align: -webkit-center;
 }

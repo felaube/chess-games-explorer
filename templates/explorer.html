@@ -4,12 +4,14 @@
     Home
 {% endblock %}
 
-{% block main %}
-    <div id="myBoard" style="width: 400px"></div>
-    <script>
-        var board = Chessboard('myBoard', 'start')
-    </script>
+{% block main %}    
     <div class="container">
+        <div class="board-container">
+            <div id="myBoard" style="width: 400px"></div>
+            <script>
+                var board = Chessboard('myBoard', 'start')
+            </script>
+        </div>
         <ul>
             {% for move in moves %}
                 {# Create variables to shorten statements #}
