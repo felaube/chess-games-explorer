@@ -10,6 +10,7 @@
             <div id="myBoard" style="width: 400px"></div>
             <script>
                 var board = Chessboard('myBoard', 'start')
+                const chessKernel = new Chess()
             </script>
         </div>
         <ul>
@@ -21,7 +22,7 @@
 
                 <li>
                     <div class="progress">
-                        <span class="move">{{ move }}</span>
+                        <div class="move" onclick="move(board, chessKernel, '{{ move }}')" class="move">{{ move }}</div>
                         <span class="move-count">{{ moves[move]["count"] }}</span>
                         <div class="progress-bar percentage-bar bar-white" role="progressbar" style="width: {{ white_percentage + "%" }} ;" aria-valuenow={{ white_percentage }} aria-valuemin="0" aria-valuemax={{ white_percentage }}>{{ white_percentage + "%" }}</div>
                         <div class="progress-bar percentage-bar bar-draw" role="progressbar" style="width: {{ draw_percentage + "%" }} ;" aria-valuenow={{ draw_percentage }} aria-valuemin="0" aria-valuemax={{ draw_percentage }}>{{ draw_percentage + "%" }}</div>

@@ -3,11 +3,29 @@ body
     background-color: rgba(39,37,34,1);
 }
 
+main .form-control
+{
+    /* center form controls */
+    display: inline-block;
+
+    /* override Bootstrap's 100% width for form controls */
+    width: auto;
+}
+
+main .center
+{
+    text-align: center;
+    margin: auto;
+    width: 50%;
+    padding: 5rem 0;
+}
+
 .move
 {
     width: 5.5rem;
     float: left;
     color: hsla(0,0%,100%,.65);
+    cursor: pointer;
 }
 
 .move-count
@@ -44,9 +62,19 @@ body
 {
     background-color: rgba(39,37,34,1);
     border-color: rgba(0,0,0,.3); 
+    width: 50%;
 }
 
 .board-container
 {
     text-align: -webkit-center;
+}
+
+button .move-link
+{
+    width: 5.5rem;
+    float: left;
+    color: hsla(0,0%,100%,.65);
+    background: inherit;
+    border: inherit;
 }
