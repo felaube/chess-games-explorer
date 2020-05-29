@@ -25,6 +25,10 @@ main .center
     width: 5.5rem;
     float: left;
     color: hsla(0,0%,100%,.65);
+}
+
+.cursor-pointer
+{
     cursor: pointer;
 }
 
@@ -33,6 +37,16 @@ main .center
     width: 4rem;
     float: right;
     color: hsla(0,0%,100%,.4);
+}
+
+.moves-list
+{
+    list-style-type: none;
+}
+
+.moves-list-element
+{
+    height: 1.25rem;
 }
 
 .progress

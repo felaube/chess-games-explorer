@@ -3,6 +3,7 @@ from flask_session import Session
 from tempfile import mkdtemp
 from helpers import get_archives_list, parse_pgn, calculate_percentages, order_dict
 import requests
+import json
 
 # Configure application
 app = Flask(__name__)
@@ -45,8 +46,9 @@ def index():
 
             moves_history = order_dict(moves_history)
 
-            return render_template("explorer.html", moves=moves_history["next_moves"])
-
+            # return render_template("explorer.html", moves=moves_history["next_moves"])
+            return render_template("explorer.html", moves=json.dumps(moves_history["next_moves"]))
+ 
         else:
             return redirect("/")
 
