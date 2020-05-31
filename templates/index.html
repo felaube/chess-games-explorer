@@ -5,13 +5,32 @@
 {% endblock %}
 
 {% block main %}
-    <div class="center">
+    <div class="home-container">
         <a href="/" class="logo"><h3><i class="fas fa-chess"></i>Games Explorer</h3></a>
         <form action="/" method="POST">
-            <div class="form-group">
-                <input class="form-control" name="username" type="text">
+            <div class="row form-inline justify-content-center">
+                <div class="form-group">
+                    <input class="form-control" name="username" placeholder="Chess.com username" type="text">
+                </div>
+                <div class="form-group">
+                    <select class="form-control" name="color">
+                        <option value="white" selected="selected">Playing as white</option>
+                        <option value="black">Playing as black</option>
+                    </select>
+                </div>
             </div>
-            <button class="btn btn-primary" style="background-color: green; border-color: green;" type="submit">Search</button>
+            <hr style="margin-bottom: 2px;">
+            <div class="row">
+                <a class="filtering-options" data-toggle="collapse" href="#filteringOptions" role="button" aria-expanded="false" aria-controls="filteringOptions" onclick="changeCaret()"><i class="fas fa-caret-right" id="filterCaret"></i>Filtering Options</a>
+            </div>
+            <div class="collapse" id="filteringOptions">
+                <div class="card card-body">
+                    <div class="form-group">
+                        <input class="form-control" name="rating" placeholder="Rating">
+                    </div>
+                </div>
+              </div>
+            <button class="btn btn-primary" style="background-color: green; border-color: green;" type="submit">Search Games</button>
         </form>
     </div>
 {% endblock %}

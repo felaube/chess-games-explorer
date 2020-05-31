@@ -151,11 +151,25 @@ function goForward(board, chessKernel, moves)
 
     for (let i=0; i<currentMoveIndex; i++)
     {        
-        currentDict = currentDict[movesHistory[i]]["next_moves"]
+        currentDict = currentDict[movesHistory[i]]["next_moves"];
     }
 
     chessKernel.move(movesHistory[currentMoveIndex - 1]);    
 
-    board.position(chessKernel.fen())
-    createMovesList(currentDict)
+    board.position(chessKernel.fen());
+    createMovesList(currentDict);
+}
+
+function changeCaret()
+{
+    //if (document.getElementById("filterCaret").classList.contains("fa-caret-right"))
+    //{
+    //    document.getElementById("filterCaret").toggleClass("fa-caret-right fa-caret-down");
+    //}
+
+    //else if (document.getElementById("filterCaret").classList.contains("fa-caret-down"))
+    //{
+    //  document.getElementById("filterCaret").toggleClass("fa-caret-down fa-caret-right");
+    //}
+    this.find('i').toggleClass("fa-caret-right fa-caret-down");
 }
