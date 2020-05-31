@@ -1,6 +1,6 @@
 body
 {
-    background-color: rgba(39,37,34,1);
+    background-color: rgba(49,46,43,1);
 }
 
 main .form-control
@@ -46,7 +46,7 @@ main .center
 
 .moves-list-element
 {
-    height: 1.25rem;
+    height: 1.75rem;
 }
 
 .progress
@@ -74,14 +74,71 @@ main .center
 
 .container
 {
-    background-color: rgba(39,37,34,1);
     border-color: rgba(0,0,0,.3); 
-    width: 50%;
+}
+
+.moves-container
+{
+    background-color: rgba(39,37,34,1);
+    padding-top: 20px;
+    padding-right: 20px;
+    display: inline-block;
+    margin-top: 20px;
+    border-radius: 10px;
+    width: 400px;
+}
+
+a.logo
+{
+    text-decoration: none;
+}
+
+.logo
+{
+    text-decoration: none;
+}
+
+.logo h3
+{
+    color: #bfbeba;
+    text-align: center;
+    padding-bottom: 10px;
+    padding-left: 20px;
+}
+
+.logo h3 i
+{
+    padding-right: 5px;
+}
+
+.moves-container p
+{
+    color: #bfbeba;
+    padding-left: 40px;
+    padding-right: 20px;
+}
+
+.moves-container .buttons-container
+{
+    display: flex;
+    padding-left: 20px;
+    padding-bottom: 1rem;
+}
+
+.moves-container .buttons-container button
+{
+    background-color: rgba(61,59,57,1);
+    width: -webkit-fill-available;
+    margin-left: 1.5px;
+    margin-right: 1.5px;
+    color: white;
 }
 
 .board-container
 {
+    padding: 20px;
     text-align: -webkit-center;
+    float: left;
 }
 
 button .move-link

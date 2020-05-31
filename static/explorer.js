@@ -1,16 +1,25 @@
-var movesHistory = [];
-
 function move(board, chessKernel, selectedMove, moves)
 {
     chessKernel.move(selectedMove);
     board.position(chessKernel.fen());
-    movesHistory.push(selectedMove)
+    movesHistory.push(selectedMove);
+    currentMoveIndex = movesHistory.length;
     
     var currentDict = moves;
+    var movesHistoryElement = document.getElementById("movesHistory")
+    var movesString = "";
     for (var i=0; i<movesHistory.length; i++)
     {
         currentDict = currentDict[movesHistory[i]]["next_moves"]
+        if (i % 2 == 0)
+        {
+            movesString += (i / 2 + 1).toString() + ". ";
+        }
+        movesString += movesHistory[i] + " ";
     }
+
+    movesHistoryElement.innerHTML = movesString;
+    
 
     createMovesList(currentDict)
 }
@@ -104,4 +113,56 @@ function createMovesList(movesDict)
     }
 
     //return movesList;
+}
+
+function reset(board, chessKernel)
+{
+    board.start();
+    chessKernel.reset();
+    movesHistory = [];
+    var movesHistoryElement = document.getElementById("movesHistory");
+    movesHistoryElement.innerHTML = "";
+    createMovesList(moves);
+}
+
+function goBack(board, chessKernel, moves)
+{   
+    if (currentMoveIndex == 0)
+    {
+        return
+    }
+
+    var currentDict = moves;
+    chessKernel.reset();
+
+    currentMoveIndex -= 1;
+
+    for (var i=0; i<currentMoveIndex; i++)
+    {
+        chessKernel.move(movesHistory[i]);
+        currentDict = currentDict[movesHistory[i]]["next_moves"]
+    }
+
+    board.position(chessKernel.fen());
+    createMovesList(currentDict);
+}
+
+function goForward(board, chessKernel, moves)
+{
+    if (currentMoveIndex >= movesHistory.length)
+    {
+        return
+    }
+    var currentDict = moves;
+    currentMoveIndex += 1;
+
+    for (let i=0; i<currentMoveIndex; i++)
+    {        
+        currentDict = currentDict[movesHistory[i]]["next_moves"]
+    }
+
+    chessKernel.move(movesHistory[currentMoveIndex - 1]);    
+
+    board.position(chessKernel.fen())
+    createMovesList(currentDict)
 }

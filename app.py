@@ -37,10 +37,17 @@ def index():
                 games = response["games"]
 
                 for game in games:
-                    # Parse each game from the archive
-                    pgn = game["pgn"]
+                    
+                    # Don't consider chess variations
+                    # other than the classical one
+                    if game["rules"] == "chess":
+                        # Parse each game from the archive
+                        try:
+                            pgn = game["pgn"]
 
-                    parse_pgn(moves_history, pgn)
+                            parse_pgn(moves_history, pgn)
+                        except KeyError:
+                            pass
 
             calculate_percentages(moves_history)
 
@@ -48,7 +55,7 @@ def index():
 
             # return render_template("explorer.html", moves=moves_history["next_moves"])
             return render_template("explorer.html", moves=json.dumps(moves_history["next_moves"]))
- 
+
         else:
             return redirect("/")
 

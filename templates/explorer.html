@@ -1,24 +1,46 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Home
+    Explorer
 {% endblock %}
 
 {% block main %}    
     <div class="container">
         <div class="board-container">
-            <div id="myBoard" style="width: 400px"></div>
+            <div id="myBoard" style="width: 624px"></div>
             <script>
                 var board = Chessboard('myBoard', 'start')
                 const chessKernel = new Chess()
                 var moves = {{ moves | safe }};
+                var movesHistory = [];
+                var currentMoveIndex = 0;
+                document.addEventListener("keydown", function(){
+                    if(event.code === "ArrowLeft") 
+                    {
+                        goBack(board, chessKernel, moves);
+                    }
+                    else if(event.code === "ArrowRight")
+                    {
+                        goForward(board, chessKernel, moves);
+                    } 
+                });
             </script>
         </div>
 
+        
         <div class="moves-container">
-            <ul id="movesList" class="moves-list">                
-                
-            </ul>
+            <a href="/" class="logo"><h3><i class="fas fa-chess"></i>Games Explorer</h3></a>
+            <hr>
+            <p id="movesHistory"></p>
+            <hr>
+            <ul id="movesList" class="moves-list"></ul>
+            <hr>
+            <div class="buttons-container">
+                <button class="btn"><i class="fa fa-search"></i></button>
+                <button class="btn" onclick="reset(board, chessKernel)"><i class="fa fa-undo"></i></button>
+                <button class="btn" onclick="goBack(board, chessKernel, moves)"><i class="fa fa-angle-left"></i></button>
+                <button class="btn" onclick="goForward(board, chessKernel, moves)"><i class="fa fa-angle-right"></i></button>
+            </div>
         </div>
         <script>createMovesList(moves)</script>
     </div>
