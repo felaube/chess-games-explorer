@@ -50,13 +50,9 @@ function createMovesList(movesDict)
 
         let spanMoveItem = document.createElement("span");
         spanMoveItem.classList.add("cursor-pointer");
-        //spanMoveItem.setAttribute("onclick", "move(board, chessKernel, '" + currentMove + "', "+ movesDict + ")");
         let text = document.createTextNode(currentMove);
         spanMoveItem.appendChild(text)
-        //spanMoveItem.setAttribute("onclick", "move(board, chessKernel, '" + text.textContent + "', "+ movesDict + ")");
         spanMoveItem.setAttribute("onclick", "move(board, chessKernel, '" + text.textContent + "', " + "moves)");
-        //console.log(typeof(movesDict))
-        //spanMoveItem.addEventListener("click", function(){move(board, chessKernel, "'" + this.textContent + "'", moves)});
 
         moveItem.appendChild(spanMoveItem);
 
@@ -107,12 +103,9 @@ function createMovesList(movesDict)
         movesListItem.appendChild(progressItem);
         
         movesList.appendChild(movesListItem);
-
-        //spanMoveItem.onclick = move(board, chessKernel, currentMove);
         
     }
 
-    //return movesList;
 }
 
 function reset(board, chessKernel)
