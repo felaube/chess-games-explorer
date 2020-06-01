@@ -20,6 +20,11 @@ main .filtering-options
     padding-bottom: 10px;
 }
 
+.filter-caret
+{
+    padding-right: 5px;
+}
+
 main .form-group
 {
     padding: 1rem;
@@ -32,16 +37,6 @@ main .home-container
     width: 50%;
     text-align: center;
 }
-
-/*
-main .center
-{
-    text-align: center;
-    margin: auto;
-    width: 50%;
-    padding: 5rem 0;
-}
-*/
 
 .move
 {
@@ -116,11 +111,6 @@ a.logo
     text-decoration: none;
 }
 
-.logo
-{
-    text-decoration: none;
-}
-
 .logo h3
 {
     color: #bfbeba;
@@ -132,6 +122,22 @@ a.logo
 .logo h3 i
 {
     padding-right: 5px;
+}
+
+a.filtering-options
+{
+    color: #bfbeba;
+}
+
+.collapse .card
+{
+    background-color: inherit;
+    border: none;
+}
+
+.collapse .card label
+{
+    color: #bfbeba;
 }
 
 .moves-container p
