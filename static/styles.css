@@ -60,6 +60,7 @@ main .home-container
 .moves-list
 {
     list-style-type: none;
+    color: #bfbeba;
 }
 
 .moves-list-element

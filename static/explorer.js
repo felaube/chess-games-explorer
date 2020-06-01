@@ -162,14 +162,65 @@ function goForward(board, chessKernel, moves)
 
 function changeCaret()
 {
-    //if (document.getElementById("filterCaret").classList.contains("fa-caret-right"))
-    //{
-    //    document.getElementById("filterCaret").toggleClass("fa-caret-right fa-caret-down");
-    //}
-
-    //else if (document.getElementById("filterCaret").classList.contains("fa-caret-down"))
-    //{
-    //  document.getElementById("filterCaret").toggleClass("fa-caret-down fa-caret-right");
-    //}
     this.find('i').toggleClass("fa-caret-right fa-caret-down");
+}
+
+// Function from https://chessboardjs.com/examples.html#5000
+function onDragStart (source, piece, position, orientation) {
+    // do not pick up pieces if the game is over
+    if (chessKernel.game_over()) return false
+  
+    // only pick up pieces for the side to move
+    if ((chessKernel.turn() === 'w' && piece.search(/^b/) !== -1) ||
+        (chessKernel.turn() === 'b' && piece.search(/^w/) !== -1)) {
+      return false
+    }
+}
+
+// Function modified from https://chessboardjs.com/examples.html#5000
+function onDrop (source, target) {
+    // see if the move is legal
+    var move = chessKernel.move({
+      from: source,
+      to: target,
+      promotion: 'q' // NOTE: always promote to a queen for example simplicity
+    })
+  
+    // illegal move
+    if (move === null) return 'snapback'
+  
+    onDropCreateMoveList(moves, move["san"])
+}
+
+// Function from https://chessboardjs.com/examples.html#5000
+// update the board position after the piece snap
+// for castling, en passant, pawn promotion
+function onSnapEnd () {
+    board.position(chessKernel.fen())
+}
+
+function onDropCreateMoveList(movesDict, moveSAN)
+{
+    currentDict = movesDict;
+    // iterate to get to the current moves
+    for (var i=0; i<currentMoveIndex; i++)
+    {
+        currentDict = currentDict[movesHistory[i]]["next_moves"];
+    }
+
+    if (moveSAN in currentDict)
+    {
+        createMovesList(moveSAN)
+    }
+    else
+    {
+        var movesList = document.getElementById("movesList")
+
+        while(movesList.firstChild)
+        {
+            movesList.removeChild(movesList.firstChild);
+        }
+
+        movesList.innerHTML = "There are no games in this position";
+    }
 }

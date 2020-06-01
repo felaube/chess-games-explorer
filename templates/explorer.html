@@ -9,7 +9,14 @@
         <div class="board-container">
             <div id="myBoard" style="width: 624px"></div>
             <script>
-                var board = Chessboard('myBoard', 'start')
+                var config = {
+                    draggable: true,
+                    position: "start",
+                    onDragStart: onDragStart,
+                    onDrop: onDrop,
+                    onSnapEnd: onSnapEnd
+                }
+                var board = Chessboard("myBoard", config)
                 const chessKernel = new Chess()
                 var moves = {{ moves | safe }};
                 var movesHistory = [];
