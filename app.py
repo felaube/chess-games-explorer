@@ -37,23 +37,42 @@ def index():
                 games = response["games"]
 
                 for game in games:
-                    
+
                     # Don't consider chess variations
                     # other than the classical one
                     if game["rules"] == "chess":
-                        # Parse each game from the archive
-                        try:
-                            pgn = game["pgn"]
 
-                            parse_pgn(moves_history, pgn)
-                        except KeyError:
-                            pass
+                        # Apply filters
+                        # Filter by color
+                        if game[request.form.get("color")]["username"] == username:
+
+                            # Filter by rating
+                            if request.form.get("rating"):
+                                if int(game[request.form.get("color")]["rating"]) < int(request.form.get("rating")):
+                                    continue
+
+                            # Filter by time class
+                            if request.form.get("time_class"):
+                                if game["time_class"] != request.form.get("time_class"):
+                                    continue
+
+                            # Filter by time control
+                            if request.form.get("time_control"):
+                                if game["time_control"] != request.form.get("time_control"):
+                                    continue
+
+                            # Parse each game from the archive
+                            try:
+                                pgn = game["pgn"]
+
+                                parse_pgn(moves_history, pgn)
+                            except KeyError:
+                                pass
 
             calculate_percentages(moves_history)
 
             moves_history = order_dict(moves_history)
 
-            # return render_template("explorer.html", moves=moves_history["next_moves"])
             return render_template("explorer.html", moves=json.dumps(moves_history["next_moves"]))
 
         else:
