@@ -27,7 +27,7 @@ main .filtering-options
 
 main .form-group
 {
-    padding: 1rem;
+    padding: 0.25rem;
 }
 
 main .home-container
@@ -124,6 +124,11 @@ a.logo
     padding-right: 5px;
 }
 
+.logo i
+{
+    color: green;
+}
+
 a.filtering-options
 {
     color: #bfbeba;
@@ -131,6 +136,13 @@ a.filtering-options
 
 .collapse .card
 {
+    background-color: inherit;
+    border: none;
+}
+
+.collapsing .card
+{
+    color: #bfbeba;
     background-color: inherit;
     border: none;
 }

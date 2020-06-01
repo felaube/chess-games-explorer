@@ -22,29 +22,56 @@
             <hr style="margin-bottom: 2px;">
             <div class="row">
                 <a class="filtering-options" data-toggle="collapse" href="#filteringOptions" role="button" aria-expanded="false" aria-controls="filteringOptions" id="filterOptionsButton"><i class="fas fa-caret-right filter-caret"></i>Filtering Options</a>
-                <script>
-                    document.getElementById("filterOptionsButton").addEventListener("click", function(){
-                        const icon = this.querySelector("i")
-                        if (icon.classList.contains("fa-caret-right")){
-                            icon.classList.remove("fa-caret-right")
-                            icon.classList.add("fa-caret-down")
-                        }
-                        else{
-                            icon.classList.remove("fa-caret-down")
-                            icon.classList.add("fa-caret-right")
-                        }
-                    })
-                </script>
             </div>
             <div class="collapse" id="filteringOptions">
                 <div class="card card-body">
                     <div class="form-group">
                         <label for="ratingFilter">Rating larger than: </label>
-                        <input class="form-control" name="rating" id="ratingFilter" placeholder="Rating">
+                        <input class="form-control" name="rating" id="ratingFilter" placeholder="Rating" type="number" step="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="timeClassFilter">Time class (Selecting a time class disables the time control filter): </label>
+                        <select class="form-control" name="time_class" id="timeClassFilter">
+                            <option selected="selected" value="">All time classes</option>
+                            <option value="daily">Daily</option>
+                            <option value="rapid">Rapid</option>
+                            <option value="blitz">Blitz</option>
+                            <option value="bullet">Bullet</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeControlFilter">Time control in seconds (E.g. 5|0 becomes 300 ; 15|10 becomes 900+10): </label>
+                        <input class="form-control" name="time_control" id="timeControlFilter" placeholder="Time control" type="text">
                     </div>
                 </div>
               </div>
             <button class="btn btn-primary" style="background-color: green; border-color: green;" type="submit">Search Games</button>
         </form>
     </div>
+    <script>
+        document.getElementById("filterOptionsButton").addEventListener("click", function(){
+            const icon = this.querySelector("i")
+            if (icon.classList.contains("fa-caret-right")){
+                icon.classList.remove("fa-caret-right")
+                icon.classList.add("fa-caret-down")
+            }
+            else{
+                icon.classList.remove("fa-caret-down")
+                icon.classList.add("fa-caret-right")
+            }
+        })
+    </script>
+    <script>
+        document.querySelector("#timeClassFilter").onchange = function(){
+            if (document.querySelector("#timeClassFilter").value != "")
+            {
+                document.querySelector("#timeControlFilter").value = "";
+                document.querySelector("#timeControlFilter").disabled = true;
+            }
+            else
+            {
+                document.querySelector("#timeControlFilter").disabled = false;
+            }
+        }
+    </script>
 {% endblock %}
