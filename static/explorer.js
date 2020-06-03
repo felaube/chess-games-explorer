@@ -1,15 +1,17 @@
 function move(board, chessKernel, selectedMove, moves)
 {
+    // Send move to kernel and update the board 
     chessKernel.move(selectedMove);
     board.position(chessKernel.fen());
-    movesHistory.push(selectedMove);
-    currentMoveIndex = movesHistory.length;
-    
+
+    updateHistory(selectedMove)
+
     var currentDict = moves;
     var movesHistoryElement = document.getElementById("movesHistory")
     var movesString = "";
-    for (var i=0; i<movesHistory.length; i++)
+    for (let i=0; i<movesHistory.length; i++)
     {
+        // Find the "next_moves" in the database from the current position
         currentDict = currentDict[movesHistory[i]]["next_moves"]
         if (i % 2 == 0)
         {
@@ -19,7 +21,6 @@ function move(board, chessKernel, selectedMove, moves)
     }
 
     movesHistoryElement.innerHTML = movesString;
-    
 
     createMovesList(currentDict)
 }
@@ -28,6 +29,7 @@ function createMovesList(movesDict)
 {
     var movesList = document.getElementById("movesList")
 
+    // Remove all elements of the "movesList" element
     while(movesList.firstChild)
     {
         movesList.removeChild(movesList.firstChild);
@@ -103,17 +105,18 @@ function createMovesList(movesDict)
         movesListItem.appendChild(progressItem);
         
         movesList.appendChild(movesListItem);
-        
     }
-
 }
 
 function reset(board, chessKernel)
 {
+    let movesHistoryElement = document.getElementById("movesHistory");
+
     board.start();
     chessKernel.reset();
     movesHistory = [];
-    var movesHistoryElement = document.getElementById("movesHistory");
+    currentMoveIndex = 0;
+    positionInDatabase = true
     movesHistoryElement.innerHTML = "";
     createMovesList(moves);
 }
@@ -127,17 +130,29 @@ function goBack(board, chessKernel, moves)
 
     var currentDict = moves;
     chessKernel.reset();
+    positionInDatabase = true;
 
     currentMoveIndex -= 1;
 
-    for (var i=0; i<currentMoveIndex; i++)
+
+    for (let i=0; i<currentMoveIndex; i++)
     {
         chessKernel.move(movesHistory[i]);
-        currentDict = currentDict[movesHistory[i]]["next_moves"]
+        try
+        {
+            currentDict = currentDict[movesHistory[i]]["next_moves"]
+        }
+        catch(err)
+        {
+            positionInDatabase = false;
+        }
     }
 
     board.position(chessKernel.fen());
-    createMovesList(currentDict);
+    if (positionInDatabase)
+    {
+        createMovesList(currentDict);
+    }
 }
 
 function goForward(board, chessKernel, moves)
@@ -149,15 +164,35 @@ function goForward(board, chessKernel, moves)
     var currentDict = moves;
     currentMoveIndex += 1;
 
-    for (let i=0; i<currentMoveIndex; i++)
-    {        
-        currentDict = currentDict[movesHistory[i]]["next_moves"];
+    // Check if goBack caught a position from the database  
+    if (positionInDatabase)
+    {
+        for (let i=0; i<currentMoveIndex; i++)
+        {
+            try
+            {
+                currentDict = currentDict[movesHistory[i]]["next_moves"];
+            }
+            catch(err)
+            {
+                positionInDatabase = false;
+                break;
+            }
+        }
     }
 
+    // Check if previous loop caught a position from the database
+    if (positionInDatabase)
+    {
+        createMovesList(currentDict);
+    }
+    else
+    {
+        movesList.innerHTML = "There are no games in this position";
+    }
+    
     chessKernel.move(movesHistory[currentMoveIndex - 1]);    
-
     board.position(chessKernel.fen());
-    createMovesList(currentDict);
 }
 
 function changeCaret()
@@ -199,21 +234,34 @@ function onSnapEnd () {
     board.position(chessKernel.fen())
 }
 
-function onDropCreateMoveList(movesDict, moveSAN)
+function onDropCreateMoveList(movesDict, selectedMove)
 {
-    currentDict = movesDict;
-    // iterate to get to the current moves
-    for (var i=0; i<currentMoveIndex; i++)
+    if (positionInDatabase)
     {
-        currentDict = currentDict[movesHistory[i]]["next_moves"];
-    }
-
-    if (moveSAN in currentDict)
-    {
-        createMovesList(moveSAN)
+        currentDict = movesDict;
+        // Iterate to get to the moves currently shown
+        for (var i=0; i<currentMoveIndex; i++)
+        {
+            currentDict = currentDict[movesHistory[i]]["next_moves"];
+        }
     }
     else
     {
+        currentDict = [];
+    }
+    
+
+    // Add another move
+    updateHistory(selectedMove)
+
+    // Check if this position is in the database
+    if (selectedMove in currentDict)
+    {
+        createMovesList(currentDict[selectedMove]["next_moves"]);
+    }
+    else
+    {
+        positionInDatabase = false;
         var movesList = document.getElementById("movesList")
 
         while(movesList.firstChild)
@@ -223,4 +271,29 @@ function onDropCreateMoveList(movesDict, moveSAN)
 
         movesList.innerHTML = "There are no games in this position";
     }
+
+    var movesHistoryElement = document.getElementById("movesHistory")
+    var movesString = "";
+    
+    for (let i=0; i<movesHistory.length; i++)
+    { 
+        if (i % 2 == 0)
+        {
+            movesString += (i / 2 + 1).toString() + ". ";
+        }
+        movesString += movesHistory[i] + " ";
+    }
+
+    movesHistoryElement.innerHTML = movesString;
+}
+
+
+function updateHistory(selectedMove)
+{
+    // Updates the number of moves and add it to the history
+    movesHistory[currentMoveIndex] = selectedMove; 
+    currentMoveIndex += 1;
+    
+    // Remove every move that has become obsolete 
+    movesHistory.splice(currentMoveIndex, movesHistory.length - currentMoveIndex);
 }

@@ -21,6 +21,7 @@
                 var moves = {{ moves | safe }};
                 var movesHistory = [];
                 var currentMoveIndex = 0;
+                var positionInDatabase = true;
                 document.addEventListener("keydown", function(){
                     if(event.code === "ArrowLeft") 
                     {
