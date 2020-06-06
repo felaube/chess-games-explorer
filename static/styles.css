@@ -191,3 +191,25 @@ button .move-link
     background: inherit;
     border: inherit;
 }
+
+.move-history
+{
+    color: hsla(0,0%,100%,.65);
+    float: left;
+    margin-right: 0.5rem;
+    padding: 0.075rem;
+    font-weight: bold;
+}
+
+div#movesHistory
+{
+    display: inline-block;
+    padding-left: 30px;
+}
+
+.current-move
+{
+    background-color: grey;
+    color: white;
+    border-radius: 0.1rem;
+}

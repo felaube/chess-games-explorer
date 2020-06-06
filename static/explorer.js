@@ -7,7 +7,7 @@ function move(board, chessKernel, selectedMove, moves)
     updateHistory(selectedMove)
 
     var currentDict = moves;
-    var movesHistoryElement = document.getElementById("movesHistory")
+    //var movesHistoryElement = document.getElementById("movesHistory")
     var movesString = "";
     for (let i=0; i<movesHistory.length; i++)
     {
@@ -20,9 +20,10 @@ function move(board, chessKernel, selectedMove, moves)
         movesString += movesHistory[i] + " ";
     }
 
-    movesHistoryElement.innerHTML = movesString;
+    //movesHistoryElement.innerHTML = movesString;
 
     createMovesList(currentDict)
+    createMovesLinks();
 }
 
 function createMovesList(movesDict)
@@ -110,29 +111,34 @@ function createMovesList(movesDict)
 
 function reset(board, chessKernel)
 {
-    let movesHistoryElement = document.getElementById("movesHistory");
+    //let movesHistoryElement = document.getElementById("movesHistory");
 
     board.start();
     chessKernel.reset();
     movesHistory = [];
     currentMoveIndex = 0;
     positionInDatabase = true
-    movesHistoryElement.innerHTML = "";
+    //movesHistoryElement.innerHTML = "";
+
     createMovesList(moves);
+    clearMovesLinks();
 }
 
-function goBack(board, chessKernel, moves)
+function goBack(board, chessKernel, moves, nTimes=1)
 {   
-    if (currentMoveIndex == 0)
+    // Check if the resulting position would be prior to the starting position
+    if (currentMoveIndex - nTimes < 0)
     {
         return
     }
+
+    unsetHighlightedMove();
 
     var currentDict = moves;
     chessKernel.reset();
     positionInDatabase = true;
 
-    currentMoveIndex -= 1;
+    currentMoveIndex -= nTimes;
 
 
     for (let i=0; i<currentMoveIndex; i++)
@@ -153,35 +159,39 @@ function goBack(board, chessKernel, moves)
     {
         createMovesList(currentDict);
     }
+
+    setHighlightedMove();
 }
 
-function goForward(board, chessKernel, moves)
+function goForward(board, chessKernel, moves, nTimes=1)
 {
-    if (currentMoveIndex >= movesHistory.length)
+    if (currentMoveIndex + nTimes > movesHistory.length)
     {
         return
     }
-    var currentDict = moves;
-    currentMoveIndex += 1;
 
-    // Check if goBack caught a position from the database  
-    if (positionInDatabase)
+    unsetHighlightedMove();
+
+    var currentDict = moves;
+    chessKernel.reset();
+    currentMoveIndex += nTimes;
+
+
+    for (let i=0; i<currentMoveIndex; i++)
     {
-        for (let i=0; i<currentMoveIndex; i++)
+        try
         {
-            try
-            {
-                currentDict = currentDict[movesHistory[i]]["next_moves"];
-            }
-            catch(err)
-            {
-                positionInDatabase = false;
-                break;
-            }
+            chessKernel.move(movesHistory[i]);
+            currentDict = currentDict[movesHistory[i]]["next_moves"];
+        }
+        catch(err)
+        {
+            positionInDatabase = false;
         }
     }
 
-    // Check if previous loop caught a position from the database
+
+    // Check if goBack went to a position from the database
     if (positionInDatabase)
     {
         createMovesList(currentDict);
@@ -191,8 +201,8 @@ function goForward(board, chessKernel, moves)
         movesList.innerHTML = "There are no games in this position";
     }
     
-    chessKernel.move(movesHistory[currentMoveIndex - 1]);    
     board.position(chessKernel.fen());
+    setHighlightedMove();
 }
 
 function changeCaret()
@@ -272,7 +282,7 @@ function onDropCreateMoveList(movesDict, selectedMove)
         movesList.innerHTML = "There are no games in this position";
     }
 
-    var movesHistoryElement = document.getElementById("movesHistory")
+    //var movesHistoryElement = document.getElementById("movesHistory")
     var movesString = "";
     
     for (let i=0; i<movesHistory.length; i++)
@@ -284,16 +294,106 @@ function onDropCreateMoveList(movesDict, selectedMove)
         movesString += movesHistory[i] + " ";
     }
 
-    movesHistoryElement.innerHTML = movesString;
+    //movesHistoryElement.innerHTML = movesString;
+    createMovesLinks()
 }
 
 
 function updateHistory(selectedMove)
 {
     // Updates the number of moves and add it to the history
+    if (movesHistory[currentMoveIndex] == selectedMove)
+    {
+        // If the move is already in the history at the right place,
+        // just increase currentMoveIndex
+        currentMoveIndex += 1;
+        return;
+    }
+
     movesHistory[currentMoveIndex] = selectedMove; 
     currentMoveIndex += 1;
     
     // Remove every move that has become obsolete 
     movesHistory.splice(currentMoveIndex, movesHistory.length - currentMoveIndex);
+}
+
+
+function createMovesLinks()
+{
+    var movesLink = document.getElementById("movesHistory")
+
+    clearMovesLinks()
+
+    for (let i = 0; i < movesHistory.length; i++)
+    {
+        currentMove = movesHistory[i]
+        
+        let moveItem = document.createElement("div");
+        moveItem.classList.add("move-history");
+
+        let spanMoveItem = document.createElement("span");
+        spanMoveItem.classList.add("cursor-pointer");
+
+        if (i % 2 == 0)
+        {
+            var text = document.createTextNode((i / 2 + 1).toString() + ". " + currentMove);
+            spanMoveItem.appendChild(text)
+            spanMoveItem.setAttribute("onclick", "goToPosition('" + text.textContent.substr(3) + "')");
+        }
+        else
+        {
+            var text = document.createTextNode(" " + currentMove);
+            spanMoveItem.appendChild(text)
+            spanMoveItem.setAttribute("onclick", "goToPosition('" + text.textContent.substr(1) + "')");
+        }
+        
+        moveItem.appendChild(spanMoveItem)
+        movesLink.appendChild(moveItem)
+    }
+
+    movesLink.children[currentMoveIndex - 1].classList.add("current-move");
+}
+
+function clearMovesLinks()
+{
+    var movesLink = document.getElementById("movesHistory")
+
+    while(movesLink.firstChild)
+    {
+        movesLink.removeChild(movesLink.firstChild);
+    }
+}
+
+function goToPosition(selectedMove)
+{
+    // Get the index of the selected move in the history
+    var selectedMoveIndex = movesHistory.findIndex(element => element == selectedMove)
+
+    if (selectedMoveIndex == currentMoveIndex -1)
+    {
+        return
+    }
+
+    // Check if the user is trying to go back or forward  
+    if (selectedMoveIndex < currentMoveIndex - 1)
+    {
+        // Trying to go back
+        goBack(board, chessKernel, moves, currentMoveIndex - 1 - selectedMoveIndex)
+    }
+    else
+    {
+        goForward(board, chessKernel, moves, selectedMoveIndex + 1 - currentMoveIndex)
+    }
+}
+
+function setHighlightedMove()
+{
+    var movesLink = document.getElementById("movesHistory");
+    movesLink.children[currentMoveIndex - 1].classList.add("current-move");
+}
+
+function unsetHighlightedMove()
+{
+    var movesLink = document.getElementById("movesHistory");
+    movesLink.children[currentMoveIndex - 1].classList.remove("current-move");
 }
