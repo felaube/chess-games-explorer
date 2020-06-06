@@ -213,3 +213,18 @@ div#movesHistory
     color: white;
     border-radius: 0.1rem;
 }
+
+span.white-percentage-hidden
+{
+    color: #dbd9d7;
+}
+
+span.draw-percentage-hidden
+{
+    color: #777574;
+}
+
+span.black-percentage-hidden
+{
+    color: #312e2b;
+}

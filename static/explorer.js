@@ -77,8 +77,18 @@ function createMovesList(movesDict)
         percentageBarWhite.setAttribute("aria-valuenow", white_percentage);
         percentageBarWhite.setAttribute("aria-valuemin", "0");
         percentageBarWhite.setAttribute("aria-valuemax", white_percentage);
+        
+        let percentageBarWhiteSpan = document.createElement("span");
         text = document.createTextNode(white_percentage + "%");
-        percentageBarWhite.appendChild(text)
+        percentageBarWhiteSpan.setAttribute("title", text.textContent);
+        percentageBarWhiteSpan.appendChild(text);
+
+        if (parseInt(white_percentage) < 20)
+        {
+            percentageBarWhiteSpan.classList.add("white-percentage-hidden");
+        }
+
+        percentageBarWhite.appendChild(percentageBarWhiteSpan)
 
         let percentageBarDraw = document.createElement("div");
         percentageBarDraw.classList.add("progress-bar", "percentage-bar", "bar-draw");
@@ -87,8 +97,18 @@ function createMovesList(movesDict)
         percentageBarDraw.setAttribute("aria-valuenow", draw_percentage);
         percentageBarDraw.setAttribute("aria-valuemin", "0");
         percentageBarDraw.setAttribute("aria-valuemax", draw_percentage);
+
+        let percentageBarDrawSpan = document.createElement("span");
         text = document.createTextNode(draw_percentage + "%");
-        percentageBarDraw.appendChild(text)
+        percentageBarDrawSpan.setAttribute("title", text.textContent);
+        percentageBarDrawSpan.appendChild(text);
+
+        if (parseInt(draw_percentage) < 20)
+        {
+            percentageBarDrawSpan.classList.add("draw-percentage-hidden");
+        }
+
+        percentageBarDraw.appendChild(percentageBarDrawSpan)
 
         let percentageBarBlack = document.createElement("div");
         percentageBarBlack.classList.add("progress-bar", "percentage-bar", "bar-black");
@@ -97,8 +117,18 @@ function createMovesList(movesDict)
         percentageBarBlack.setAttribute("aria-valuenow", black_percentage);
         percentageBarBlack.setAttribute("aria-valuemin", "0");
         percentageBarBlack.setAttribute("aria-valuemax", black_percentage);
+
+        let percentageBarBlackSpan = document.createElement("span");
         text = document.createTextNode(black_percentage + "%");
-        percentageBarBlack.appendChild(text)
+        percentageBarBlackSpan.setAttribute("title", text.textContent);
+        percentageBarBlackSpan.appendChild(text);
+
+        if (parseInt(black_percentage) < 20)
+        {
+            percentageBarBlackSpan.classList.add("black-percentage-hidden");
+        }
+
+        percentageBarBlack.appendChild(percentageBarBlackSpan)
         
         progressItem.appendChild(moveItem);
         progressItem.appendChild(moveCountItem);
@@ -227,7 +257,7 @@ function goForward(board, chessKernel, moves, nTimes=1)
     }
     else
     {
-        movesList.innerHTML = "There are no games in this position";
+        movesList.innerHTML = "There are no games that reached this position";
     }
     
     board.position(chessKernel.fen());
@@ -315,7 +345,7 @@ function onDropCreateMoveList(movesDict, selectedMove)
             movesList.removeChild(movesList.firstChild);
         }
 
-        movesList.innerHTML = "There are no games in this position";
+        movesList.innerHTML = "There are no games that reached this position";
     }
 
     createMovesLinks()
