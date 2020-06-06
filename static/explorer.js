@@ -1,31 +1,34 @@
-function move(board, chessKernel, selectedMove, moves)
+/**
+ * Handles the move, when it selected from the database.
+ * @param {object} board Described in static/board
+ * @param {object} chessKernel Described in static/chess
+ * @param {string} selectedMove 
+ * @param {object} moves JSON parsed from Python dict, constructed in app.py
+ */
+function moveFromDatabase(board, chessKernel, selectedMove, moves)
 {
     // Send move to kernel and update the board 
     chessKernel.move(selectedMove);
     board.position(chessKernel.fen());
 
+    // Add move to history array
     updateHistory(selectedMove)
 
     var currentDict = moves;
-    //var movesHistoryElement = document.getElementById("movesHistory")
-    var movesString = "";
     for (let i=0; i<movesHistory.length; i++)
     {
         // Find the "next_moves" in the database from the current position
         currentDict = currentDict[movesHistory[i]]["next_moves"]
-        if (i % 2 == 0)
-        {
-            movesString += (i / 2 + 1).toString() + ". ";
-        }
-        movesString += movesHistory[i] + " ";
     }
-
-    //movesHistoryElement.innerHTML = movesString;
 
     createMovesList(currentDict)
     createMovesLinks();
 }
 
+/**
+ * Recreates the HTML elements corresponding to the database at a specific position, given by movesDict 
+ * @param {object} movesDict 
+ */
 function createMovesList(movesDict)
 {
     var movesList = document.getElementById("movesList")
@@ -55,7 +58,7 @@ function createMovesList(movesDict)
         spanMoveItem.classList.add("cursor-pointer");
         let text = document.createTextNode(currentMove);
         spanMoveItem.appendChild(text)
-        spanMoveItem.setAttribute("onclick", "move(board, chessKernel, '" + text.textContent + "', " + "moves)");
+        spanMoveItem.setAttribute("onclick", "moveFromDatabase(board, chessKernel, '" + text.textContent + "', " + "moves)");
 
         moveItem.appendChild(spanMoveItem);
 
@@ -109,21 +112,30 @@ function createMovesList(movesDict)
     }
 }
 
+/**
+ * Reset everything as if the user refreshed the page 
+ * @param {object} board 
+ * @param {object} chessKernel 
+ */
 function reset(board, chessKernel)
 {
-    //let movesHistoryElement = document.getElementById("movesHistory");
-
     board.start();
     chessKernel.reset();
     movesHistory = [];
     currentMoveIndex = 0;
     positionInDatabase = true
-    //movesHistoryElement.innerHTML = "";
 
     createMovesList(moves);
     clearMovesLinks();
 }
 
+/**
+ * Go back 1 or more moves in the history, displaying previous positions on the board
+ * @param {object} board 
+ * @param {object} chessKernel 
+ * @param {object} moves 
+ * @param {number} nTimes 
+ */
 function goBack(board, chessKernel, moves, nTimes=1)
 {   
     // Check if the resulting position would be prior to the starting position
@@ -140,7 +152,7 @@ function goBack(board, chessKernel, moves, nTimes=1)
 
     currentMoveIndex -= nTimes;
 
-
+    // Move on the kernel once at a time, and check if the position can be found in the databse
     for (let i=0; i<currentMoveIndex; i++)
     {
         chessKernel.move(movesHistory[i]);
@@ -150,48 +162,65 @@ function goBack(board, chessKernel, moves, nTimes=1)
         }
         catch(err)
         {
+            // If an error was caught, it means the position is not in the database
             positionInDatabase = false;
         }
     }
 
     board.position(chessKernel.fen());
+    
     if (positionInDatabase)
     {
         createMovesList(currentDict);
     }
 
-    setHighlightedMove();
+    // If currentMoveIndex is 0, we are at the starting position, so, there is no move to be highlighted
+    if (currentMoveIndex != 0)
+    {
+        setHighlightedMove();
+    }
 }
 
+/**
+ * Go forward 1 or more moves in the history, restoring positions set by goBack
+ * @param {object} board 
+ * @param {object} chessKernel 
+ * @param {object} moves 
+ * @param {number} nTimes 
+ */
 function goForward(board, chessKernel, moves, nTimes=1)
 {
+    // Check if the resulting index would go beyond the game set currently in movesHistory
     if (currentMoveIndex + nTimes > movesHistory.length)
     {
         return
     }
 
-    unsetHighlightedMove();
+    // If currentMoveIndex is 0, we are at the starting position, so, there is no move highlighted
+    if (currentMoveIndex != 0)
+    {
+        unsetHighlightedMove();
+    }
 
     var currentDict = moves;
     chessKernel.reset();
     currentMoveIndex += nTimes;
 
-
+    // Move on the kernel once at a time, and check if the position can be found in the databse
     for (let i=0; i<currentMoveIndex; i++)
     {
+        chessKernel.move(movesHistory[i]);
         try
         {
-            chessKernel.move(movesHistory[i]);
             currentDict = currentDict[movesHistory[i]]["next_moves"];
         }
         catch(err)
         {
+            // If an error was caught, it means the position is not in the database
             positionInDatabase = false;
         }
     }
 
-
-    // Check if goBack went to a position from the database
     if (positionInDatabase)
     {
         createMovesList(currentDict);
@@ -205,6 +234,9 @@ function goForward(board, chessKernel, moves, nTimes=1)
     setHighlightedMove();
 }
 
+/**
+ * Modifies the icon of the caret when clicked
+ */
 function changeCaret()
 {
     this.find('i').toggleClass("fa-caret-right fa-caret-down");
@@ -244,6 +276,11 @@ function onSnapEnd () {
     board.position(chessKernel.fen())
 }
 
+/**
+ * Handles the move, when it is made dragging a piece on the board
+ * @param {object} movesDict 
+ * @param {string} selectedMove 
+ */
 function onDropCreateMoveList(movesDict, selectedMove)
 {
     if (positionInDatabase)
@@ -260,7 +297,6 @@ function onDropCreateMoveList(movesDict, selectedMove)
         currentDict = [];
     }
     
-
     // Add another move
     updateHistory(selectedMove)
 
@@ -282,30 +318,20 @@ function onDropCreateMoveList(movesDict, selectedMove)
         movesList.innerHTML = "There are no games in this position";
     }
 
-    //var movesHistoryElement = document.getElementById("movesHistory")
-    var movesString = "";
-    
-    for (let i=0; i<movesHistory.length; i++)
-    { 
-        if (i % 2 == 0)
-        {
-            movesString += (i / 2 + 1).toString() + ". ";
-        }
-        movesString += movesHistory[i] + " ";
-    }
-
-    //movesHistoryElement.innerHTML = movesString;
     createMovesLinks()
 }
 
-
+/**
+ * Updates movesHistory variable, when needed, adding a new move, or just incrementing the currentMoveIndex variable
+ * @param {string} selectedMove 
+ */
 function updateHistory(selectedMove)
 {
     // Updates the number of moves and add it to the history
     if (movesHistory[currentMoveIndex] == selectedMove)
     {
         // If the move is already in the history at the right place,
-        // just increase currentMoveIndex
+        // just increment currentMoveIndex
         currentMoveIndex += 1;
         return;
     }
@@ -317,7 +343,9 @@ function updateHistory(selectedMove)
     movesHistory.splice(currentMoveIndex, movesHistory.length - currentMoveIndex);
 }
 
-
+/**
+ * Creates the clickable items shown above the moves database
+ */
 function createMovesLinks()
 {
     var movesLink = document.getElementById("movesHistory")
@@ -336,16 +364,16 @@ function createMovesLinks()
 
         if (i % 2 == 0)
         {
+            // Move made by white
             var text = document.createTextNode((i / 2 + 1).toString() + ". " + currentMove);
-            spanMoveItem.appendChild(text)
-            spanMoveItem.setAttribute("onclick", "goToPosition('" + text.textContent.substr(3) + "')");
         }
         else
         {
-            var text = document.createTextNode(" " + currentMove);
-            spanMoveItem.appendChild(text)
-            spanMoveItem.setAttribute("onclick", "goToPosition('" + text.textContent.substr(1) + "')");
+            // Move made by black
+            var text = document.createTextNode(" " + currentMove);    
         }
+        spanMoveItem.appendChild(text)
+        spanMoveItem.setAttribute("onclick", "goToPosition(" + i + ")");
         
         moveItem.appendChild(spanMoveItem)
         movesLink.appendChild(moveItem)
@@ -354,6 +382,9 @@ function createMovesLinks()
     movesLink.children[currentMoveIndex - 1].classList.add("current-move");
 }
 
+/**
+ * Clear all clickable items above the moves database
+ */
 function clearMovesLinks()
 {
     var movesLink = document.getElementById("movesHistory")
@@ -364,11 +395,14 @@ function clearMovesLinks()
     }
 }
 
-function goToPosition(selectedMove)
+/**
+ * Handles the move, when it is selected from the clickable items above the moves database,
+ * going back or forward on the history, depending on the demanded move index.
+ * @param {number} selectedMoveIndex 
+ */
+function goToPosition(selectedMoveIndex)
 {
-    // Get the index of the selected move in the history
-    var selectedMoveIndex = movesHistory.findIndex(element => element == selectedMove)
-
+    // Check if user selected the move corresponding to the current position on the board
     if (selectedMoveIndex == currentMoveIndex -1)
     {
         return
@@ -382,16 +416,23 @@ function goToPosition(selectedMove)
     }
     else
     {
+        // Trying to go forward
         goForward(board, chessKernel, moves, selectedMoveIndex + 1 - currentMoveIndex)
     }
 }
 
+/**
+ * Add css class that highlights the latest move played on the board 
+ */
 function setHighlightedMove()
 {
     var movesLink = document.getElementById("movesHistory");
     movesLink.children[currentMoveIndex - 1].classList.add("current-move");
 }
 
+/**
+ * Removes css class that highlights the latest move played on the board 
+ */
 function unsetHighlightedMove()
 {
     var movesLink = document.getElementById("movesHistory");
