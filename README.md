@@ -6,6 +6,8 @@ The application also displays the winning, losing and drawing percentages of the
 
 The application uses chess.com API to import the games information, chessboard.js to embed the chess board and chess.js to handle the moves.
 
+You can check it out at http://fer123a.pythonanywhere.com/
+
 # How to use it
 
 ## Home Page
