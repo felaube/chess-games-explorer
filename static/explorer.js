@@ -15,7 +15,7 @@ function moveFromDatabase(board, chessKernel, selectedMove, moves)
     updateHistory(selectedMove)
 
     var currentDict = moves;
-    for (let i=0; i<movesHistory.length; i++)
+    for (let i=0; i<currentMoveIndex; i++)
     {
         // Find the "next_moves" in the database from the current position
         currentDict = currentDict[movesHistory[i]]["next_moves"]
