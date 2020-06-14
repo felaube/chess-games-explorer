@@ -14,7 +14,8 @@
                     position: "start",
                     onDragStart: onDragStart,
                     onDrop: onDrop,
-                    onSnapEnd: onSnapEnd
+                    onSnapEnd: onSnapEnd,
+                    orientation: {{ color | tojson }}
                 }
                 var board = Chessboard("myBoard", config)
                 const chessKernel = new Chess()

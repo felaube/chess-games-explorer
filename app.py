@@ -73,10 +73,11 @@ def index():
 
             moves_history = order_dict(moves_history)
 
-            return render_template("explorer.html", moves=json.dumps(moves_history["next_moves"]))
+            return render_template("explorer.html", moves=json.dumps(moves_history["next_moves"]), color=request.form.get("color"))
 
         else:
             return redirect("/")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
