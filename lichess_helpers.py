@@ -16,11 +16,15 @@ def get_lichess_moves_history(username, color, rating, time_class, time_control)
                   "color": color}
 
     # Make the request to lichess API
-    response = requests.get(
+    try:
+        response = requests.get(
                             f"https://www.lichess.org/api/games/user/{username}",
                             params=params,
                             headers={"Accept": "application/x-ndjson"}
-    )
+        )
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
 
     # Remove \n to turn the ndjson file into a json file
     response_text = response.content.decode("utf-8")
