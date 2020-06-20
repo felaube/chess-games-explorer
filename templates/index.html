@@ -8,6 +8,14 @@
     <div class="home-container">
         <a href="/" class="logo"><h3><i class="fas fa-chess"></i>Games Explorer</h3></a>
         <form action="/" method="POST">
+            <div class="form-group">
+                <label for="platformSelection">Platform: </label>
+                <select class="form-control" name="platform" id="platformSelection" onchange="updateTimeClasses()">
+                    <option disabled selected value="">Select a platform</option>
+                    <option value="chess_dot_com">Chess.com</option>
+                    <option value="lichess">Lichess</option>
+                </select>
+            </div>
             <div class="form-row form-inline justify-content-center">
                 <div class="form-group">
                     <input class="form-control" name="username" placeholder="Chess.com username" type="text">
@@ -32,7 +40,7 @@
                     <div class="form-group">
                         <label for="timeClassFilter">Time class (Selecting a time class disables the time control filter): </label>
                         <select class="form-control" name="time_class" id="timeClassFilter">
-                            <option selected="selected" value="">All time classes</option>
+                            <option selected value="">All time classes</option>
                             <option value="daily">Daily</option>
                             <option value="rapid">Rapid</option>
                             <option value="blitz">Blitz</option>
