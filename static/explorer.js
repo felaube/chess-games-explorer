@@ -468,3 +468,76 @@ function unsetHighlightedMove()
     var movesLink = document.getElementById("movesHistory");
     movesLink.children[currentMoveIndex - 1].classList.remove("current-move");
 }
+
+/**
+ * Updates the options for time classes depending on the chosen platform
+ */
+function updateTimeClasses()
+{
+    var timeClass = document.getElementById("timeClassFilter");
+    var platform = document.getElementById("platformSelection");
+
+    // Remove all options but the first one, which is only a placeholder
+    while(timeClass.children[1])
+    {
+        timeClass.removeChild(timeClass.children[1]);
+    }
+
+    if (platform.value == "chess_dot_com")
+    {
+        var optionItem = document.createElement("option");
+        optionItem.value = "daily";
+        optionItem.innerHTML = "Daily";
+        timeClass.appendChild(optionItem);
+
+        var optionItem = document.createElement("option");
+        optionItem.value = "rapid";
+        optionItem.innerHTML = "Rapid";
+        timeClass.appendChild(optionItem);
+
+        var optionItem = document.createElement("option");
+        optionItem.value = "blitz";
+        optionItem.innerHTML = "Blitz";
+        timeClass.appendChild(optionItem);
+
+        var optionItem = document.createElement("option");
+        optionItem.value = "bullet";
+        optionItem.innerHTML = "Bullet";
+        timeClass.appendChild(optionItem);
+    }
+    else
+    {
+        if (platform.value == "lichess")
+        {
+            var optionItem = document.createElement("option");
+            optionItem.value = "correspondence";
+            optionItem.innerHTML = "Correspondence";
+            timeClass.appendChild(optionItem);
+
+            var optionItem = document.createElement("option");
+            optionItem.value = "classical";
+            optionItem.innerHTML = "Classical";
+            timeClass.appendChild(optionItem);
+
+            var optionItem = document.createElement("option");
+            optionItem.value = "rapid";
+            optionItem.innerHTML = "Rapid";
+            timeClass.appendChild(optionItem);
+
+            var optionItem = document.createElement("option");
+            optionItem.value = "blitz";
+            optionItem.innerHTML = "Blitz";
+            timeClass.appendChild(optionItem);
+
+            var optionItem = document.createElement("option");
+            optionItem.value = "bullet";
+            optionItem.innerHTML = "Bullet";
+            timeClass.appendChild(optionItem);
+
+            var optionItem = document.createElement("option");
+            optionItem.value = "ultraBullet";
+            optionItem.innerHTML = "Ultra Bullet";
+            timeClass.appendChild(optionItem);
+        }
+    }
+}

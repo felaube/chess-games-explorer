@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 from tempfile import mkdtemp
-from helpers import get_archives_list, parse_pgn, calculate_percentages, order_dict
-import requests
+from helpers import calculate_percentages, order_dict
+from chess_dot_com_helpers import get_chess_dot_com_moves_history
+from lichess_helpers import get_lichess_moves_history
 import json
 
 # Configure application
@@ -25,55 +26,39 @@ def index():
     if request.method == "POST":
         # Get information from form and set up the explorer
         username = request.form.get("username")
+        platform = request.form.get("platform")
+        color = request.form.get("color")
+        rating = request.form.get("rating")
+        time_class = request.form.get("time_class")
+        time_control = request.form.get("time_control")
 
-        archives_list = get_archives_list(username)
+        # If user did not provide a username or a platform,
+        # redirect to home page
+        if not username or not platform:
+            return redirect("/")
 
-        if archives_list is not None:
-            moves_history = {"next_moves": {}}
-            for url in archives_list:
-                response = requests.get(url)
-                response = response.json()
+        if platform == "chess_dot_com":
+            moves_history = get_chess_dot_com_moves_history(username=username,
+                                                            color=color,
+                                                            rating=rating,
+                                                            time_class=time_class,
+                                                            time_control=time_control)
 
-                games = response["games"]
+        if platform == "lichess":
+            moves_history = get_lichess_moves_history(username=username,
+                                                      color=color,
+                                                      rating=rating,
+                                                      time_class=time_class,
+                                                      time_control=time_control)
 
-                for game in games:
-
-                    # Don't consider chess variations
-                    # other than the classical one
-                    if game["rules"] == "chess":
-
-                        # Apply filters
-                        # Filter by color
-                        if game[request.form.get("color")]["username"] == username:
-
-                            # Filter by rating
-                            if request.form.get("rating"):
-                                if int(game[request.form.get("color")]["rating"]) < int(request.form.get("rating")):
-                                    continue
-
-                            # Filter by time class
-                            if request.form.get("time_class"):
-                                if game["time_class"] != request.form.get("time_class"):
-                                    continue
-
-                            # Filter by time control
-                            if request.form.get("time_control"):
-                                if game["time_control"] != request.form.get("time_control"):
-                                    continue
-
-                            # Parse each game from the archive
-                            try:
-                                pgn = game["pgn"]
-
-                                parse_pgn(moves_history, pgn)
-                            except KeyError:
-                                pass
-
+        if moves_history is not None:
             calculate_percentages(moves_history)
 
             moves_history = order_dict(moves_history)
 
-            return render_template("explorer.html", moves=json.dumps(moves_history["next_moves"]), color=request.form.get("color"))
+            return render_template("explorer.html",
+                                   moves=json.dumps(moves_history["next_moves"]),
+                                   color=color)
 
         else:
             return redirect("/")
