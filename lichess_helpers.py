@@ -18,7 +18,7 @@ def get_lichess_moves_history(username, color, rating, time_class, time_control)
     # Make the request to lichess API
     try:
         response = requests.get(
-                            f"https://www.lichess.org/api/games/user/{username}",
+                            f"https://lichess.org/api/games/user/{username}",
                             params=params,
                             headers={"Accept": "application/x-ndjson"}
         )
