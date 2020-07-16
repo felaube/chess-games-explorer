@@ -8,7 +8,7 @@ The application uses chess.com API to import the games information, chessboard.j
 
 You can check it out at http://fer123a.pythonanywhere.com/
 
-NOTE: There is also an integration with the Lichess platform, using its API. However, I don't recommend using it since importing games from Lichess takes waaaaay too much time.
+NOTE: There is also an integration with the Lichess platform, using its API. However, I don't recommend using it since it takes way too long to import the games from Lichess.
 
 # How to use it
 
