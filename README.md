@@ -8,6 +8,8 @@ The application uses chess.com API to import the games information, chessboard.j
 
 You can check it out at http://fer123a.pythonanywhere.com/
 
+NOTE: There is also an integration with the Lichess platform, using its API. However, I don't recommend using it since importing games from Lichess takes waaaaay too much time.
+
 # How to use it
 
 ## Home Page
@@ -45,5 +47,8 @@ chessboard.js:
 chess.js:
     Copyright (c) 2020, Jeff Hlywa (jhlywa@gmail.com)
     https://github.com/jhlywa/chess.js
+    
+lichess API:
+    https://lichess.org/api
     
 
