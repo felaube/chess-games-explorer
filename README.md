@@ -1,6 +1,6 @@
 # Overview
 
-This repo constains the code for a Flask powered web application that allows a chess player to see all the positions he played online in the [chess.com](https://www.chess.com/) platform. The games can be filtered by the player rating (e.g. only displays games in which the player rating is above 1800), the time class (e.g. blitz, bullet, rapid, daily) and/or time control (e.g. 300, 900+10, 300+5).
+Chess Games Explorer is a Flask powered web application that allows a chess player to see all the positions he played online in the [chess.com](https://www.chess.com/) platform. The games can be filtered by the player rating (e.g. only displays games in which the player rating is above 1800), the time class (e.g. blitz, bullet, rapid, daily) and/or time control (e.g. 300, 900+10, 300+5).
 
 The application also displays the winning, losing and drawing percentages of the games in which each position was reached. It allows the player to track which positions he/she encounters more often, and the positions he/she most struggles with.
 
