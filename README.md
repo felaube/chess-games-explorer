@@ -1,12 +1,14 @@
 # Overview
 
-This repo constains the code for a Flask powered web application that allows a chess player to see all the positions he played online in the [chess.com](https://www.chess.com/) platform. The games can be filtered by the player rating (e.g. only displays games in which the player rating is above 1800), the time class (e.g. blitz, bullet, rapid, daily) and/or time control (e.g. 300, 900+10, 300+5).
+Chess Games Explorer is a Flask powered web application that allows a chess player to see all the positions he played online in the [chess.com](https://www.chess.com/) platform. The games can be filtered by the player rating (e.g. only displays games in which the player rating is above 1800), the time class (e.g. blitz, bullet, rapid, daily) and/or time control (e.g. 300, 900+10, 300+5).
 
 The application also displays the winning, losing and drawing percentages of the games in which each position was reached. It allows the player to track which positions he/she encounters more often, and the positions he/she most struggles with.
 
 The application uses chess.com API to import the games information, chessboard.js to embed the chess board and chess.js to handle the moves.
 
 You can check it out at http://fer123a.pythonanywhere.com/
+
+NOTE: There is also an integration with the Lichess platform, using its API. However, I don't recommend using it since it takes way too long to import the games from Lichess.
 
 # How to use it
 
@@ -45,5 +47,8 @@ chessboard.js:
 chess.js:
     Copyright (c) 2020, Jeff Hlywa (jhlywa@gmail.com)
     https://github.com/jhlywa/chess.js
+    
+lichess API:
+    https://lichess.org/api
     
 

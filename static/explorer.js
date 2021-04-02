@@ -541,3 +541,12 @@ function updateTimeClasses()
         }
     }
 }
+
+/**
+ * Open a new tab with a Lichess analysis of the current position
+ */
+function openAnalysis()
+{
+    window.open("https://lichess.org/analysis/" +
+                chessKernel.fen().replace(" ", "_"))
+}
