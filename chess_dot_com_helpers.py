@@ -1,18 +1,27 @@
 import requests
 import re
+import time
 
 
 def get_chess_dot_com_moves_history(username, color, rating, time_class, time_control):
     """
     Construct the moves history from chess dot com archives
     """
-
+    start = time.time()
     archives_list = get_archives(username)
+    end = time.time()
+    print(f"Time spent to get the archives_list: {end - start}")
 
     if archives_list is not None:
+        acumulated_time = 0
         moves_history = {"next_moves": {}}
         for url in archives_list:
+            start = time.time()
             response = requests.get(url)
+            end = time.time()
+
+            acumulated_time = acumulated_time + end - start
+
             response = response.json()
 
             games = response["games"]
@@ -49,8 +58,13 @@ def get_chess_dot_com_moves_history(username, color, rating, time_class, time_co
                             parse_pgn(moves_history, pgn)
                         except KeyError:
                             pass
+
+        print(f"Time elapsed to make all the requests in archives_list: {acumulated_time}")
+        
         return moves_history
+
     else:
+
         return None
 
 
