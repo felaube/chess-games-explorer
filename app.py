@@ -23,6 +23,7 @@ def index():
         session.clear()
         # Render home page
         return render_template("index.html")
+
     if request.method == "POST":
         # Get information from form and set up the explorer
         username = request.form.get("username")
@@ -32,10 +33,11 @@ def index():
         time_class = request.form.get("time_class")
         time_control = request.form.get("time_control")
 
-        # If user did not provide a username or a platform,
-        # redirect to home page
-        if not username or not platform:
-            return redirect("/")
+        # Check if user provided a platform and an username
+        if not platform:
+            return render_template("index.html", error="A platform must me selected!")
+        if not username:
+            return render_template("index.html", error="Username not found!")
 
         if platform == "chess_dot_com":
             moves_history = get_chess_dot_com_moves_history(username=username,
@@ -55,6 +57,9 @@ def index():
             calculate_percentages(moves_history)
 
             moves_history = order_dict(moves_history)
+
+            if not moves_history["next_moves"]:
+                return render_template("index.html", error="No game matching selected options has been found!")
 
             return render_template("explorer.html",
                                    moves=json.dumps(moves_history["next_moves"]),

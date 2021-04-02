@@ -27,6 +27,9 @@
                     </select>
                 </div>
             </div>
+            {% if error %}
+                <p class=error><strong>Error:</strong> {{ error }}
+            {% endif %}
             <hr style="margin-bottom: 2px;">
             <div class="row">
                 <a class="filtering-options" data-toggle="collapse" href="#filteringOptions" role="button" aria-expanded="false" aria-controls="filteringOptions" id="filterOptionsButton"><i class="fas fa-caret-right filter-caret"></i>Filtering Options</a>

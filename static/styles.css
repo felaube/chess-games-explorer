@@ -8,6 +8,10 @@ label
     color: #bfbeba;
 }
 
+.error{
+    color: red;
+}
+
 main .form-control
 {
     /* center form controls */
