@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 def calculate_percentages(moves_dict):
     for move in moves_dict["next_moves"]:
-        # Declare aux_dict only to shorten lines
+
         aux_dict = moves_dict["next_moves"][move]
 
         aux_dict["white_percentage"] = round(aux_dict["white_wins"] /
