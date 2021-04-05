@@ -38,7 +38,7 @@ def index():
 
         # Check if user provided a platform and an username
         if not platform:
-            return render_template("index.html", error="A platform must me selected!")
+            return render_template("index.html", error="A platform must be selected!")
         if not username:
             return render_template("index.html", error="Username not found!")
 
