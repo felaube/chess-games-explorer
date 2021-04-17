@@ -1,8 +1,12 @@
 import requests
 import re
+import time
+import aiohttp
+import asyncio
 
 
-def get_chess_dot_com_moves_history(username, color, rating, time_class, time_control):
+def get_chess_dot_com_moves_history(username, color, rating,
+                                    time_class, time_control):
     """
     Construct the moves history from chess dot com archives
     """
@@ -11,45 +15,48 @@ def get_chess_dot_com_moves_history(username, color, rating, time_class, time_co
 
     if archives_list is not None:
         moves_history = {"next_moves": {}}
-        for url in archives_list:
-            response = requests.get(url)
-            response = response.json()
 
-            games = response["games"]
+        start = time.time()
+        games = asyncio.run(main(archives_list))
+        end = time.time()
+        print(f"Time elapsed to make all the"
+              f" requests in archives_list: {end - start}")
 
-            for game in games:
+        for game in games:
 
-                # Don't consider chess variations
-                # other than the classical one
-                if game["rules"] == "chess":
+            # Don't consider chess variations
+            # other than the classical one
+            if game["rules"] == "chess":
 
-                    # Apply filters
-                    # Filter by color
-                    if game[color]["username"] == username:
+                # Apply filters
+                # Filter by color
+                if game[color]["username"] == username:
 
-                        # Filter by rating
-                        if rating:
-                            if int(game[color]["rating"]) < int(rating):
-                                continue
+                    # Filter by rating
+                    if rating:
+                        if int(game[color]["rating"]) < int(rating):
+                            continue
 
-                        # Filter by time class
-                        if time_class:
-                            if game["time_class"] != time_class:
-                                continue
+                    # Filter by time class
+                    if time_class:
+                        if game["time_class"] != time_class:
+                            continue
 
-                        # Filter by time control
-                        if time_control:
-                            if game["time_control"] != time_control:
-                                continue
+                    # Filter by time control
+                    if time_control:
+                        if game["time_control"] != time_control:
+                            continue
 
-                        # Parse each game from the archive
-                        try:
-                            pgn = game["pgn"]
+                    # Parse each game from the archive
+                    try:
+                        pgn = game["pgn"]
 
-                            parse_pgn(moves_history, pgn)
-                        except KeyError:
-                            pass
+                        parse_pgn(moves_history, pgn)
+                    except KeyError:
+                        pass
+
         return moves_history
+
     else:
         return None
 
@@ -140,3 +147,30 @@ def parse_move(moves_dict, pgn, current_move, white_move, result):
     else:
         # No move was played in this position - the game ended here
         return None
+
+
+async def main(archives_list):
+    #connector = aiohttp.TCPConnector(limit_per_host=20)
+    #async with aiohttp.ClientSession(connector=connector) as session:
+    async with aiohttp.ClientSession() as session:
+        tasks = [asyncio.ensure_future(get_games_data(session, url))
+                 for url in archives_list]
+
+        games_per_archive = await asyncio.gather(*tasks)
+
+    games = [item for games_list in games_per_archive for item in games_list]
+    return games
+    # asyncio.gather(*[get_games_data(session, url) for url in archives]) 
+
+
+async def get_games_data(session, url):
+
+    async with session.get(url) as response:
+        if response.status == 429:
+            print("Not JSON")
+        json_response = await response.json()
+        games = json_response["games"]
+        await asyncio.sleep(1)
+
+
+        return games
