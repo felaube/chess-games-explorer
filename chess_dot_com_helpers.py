@@ -8,7 +8,7 @@ import asyncio
 def get_chess_dot_com_moves_history(username, color, rating,
                                     time_class, time_control):
     """
-    Construct the moves history from chess dot com archives
+    Construct the moves history from chess.com archives
     """
 
     archives_list = get_monthly_archives(username)
@@ -63,7 +63,7 @@ def get_chess_dot_com_moves_history(username, color, rating,
 
 def get_monthly_archives(username):
     """
-    Make a request to Chess.com API to obtain a list
+    Make a request to chess.com API to obtain a list
     containing the list of monthly archives available for the player.
 
     The monthly archive is a url to which an API request must be made
