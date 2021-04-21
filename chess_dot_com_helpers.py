@@ -156,8 +156,8 @@ def parse_move(moves_dict, pgn, current_move, white_to_move, result):
 
 
 async def get_games_data(archives_list):
-
-    async with aiohttp.ClientSession() as session:
+    connector = aiohttp.TCPConnector(limit_per_host=3)
+    async with aiohttp.ClientSession(connector=connector) as session:
         tasks = [asyncio.ensure_future(run_api_request(session, url))
                  for url in archives_list]
 
@@ -173,8 +173,9 @@ async def run_api_request(session, url):
     async with session.get(url) as response:
         json_response = await response.json()
         games = json_response["games"]
+        print(url)
 
         # Sleep to avoid 429 error (too many requests)
-        await asyncio.sleep(4)
+        # await asyncio.sleep(4)
 
         return games
