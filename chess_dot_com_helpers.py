@@ -172,6 +172,9 @@ async def run_api_request(session, url):
 
     async with session.get(url) as response:
         json_response = await response.json()
+        if response.status == 429:
+            json_response.raise_for_status()
+
         games = json_response["games"]
         print(url)
 
