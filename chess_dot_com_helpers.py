@@ -168,6 +168,9 @@ async def get_games_data(archives_list):
     return games
 
 
+semaphore = asyncio.Semaphore(3)
+
+
 async def run_api_request(session, url):
 
     async with session.get(url) as response:
