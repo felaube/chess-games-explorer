@@ -12,44 +12,45 @@ def get_chess_dot_com_moves_history(username, color, rating,
 
     if archives_list is not None:
         moves_history = {"next_moves": {}}
-        for url in archives_list:
-            response = requests.get(url)
-            response = response.json()
+        with requests.Session() as session:
+            for url in archives_list:
+                response = session.get(url)
+                response = response.json()
 
-            games = response["games"]
+                games = response["games"]
 
-            for game in games:
+                for game in games:
 
-                # Don't consider chess variations
-                # other than the classical one
-                if game["rules"] == "chess":
+                    # Don't consider chess variations
+                    # other than the classical one
+                    if game["rules"] == "chess":
 
-                    # Apply filters
-                    # Filter by color
-                    if game[color]["username"] == username:
+                        # Apply filters
+                        # Filter by color
+                        if game[color]["username"] == username:
 
-                        # Filter by rating
-                        if rating:
-                            if int(game[color]["rating"]) < int(rating):
-                                continue
+                            # Filter by rating
+                            if rating:
+                                if int(game[color]["rating"]) < int(rating):
+                                    continue
 
-                        # Filter by time class
-                        if time_class:
-                            if game["time_class"] != time_class:
-                                continue
+                            # Filter by time class
+                            if time_class:
+                                if game["time_class"] != time_class:
+                                    continue
 
-                        # Filter by time control
-                        if time_control:
-                            if game["time_control"] != time_control:
-                                continue
+                            # Filter by time control
+                            if time_control:
+                                if game["time_control"] != time_control:
+                                    continue
 
-                        # Parse each game from the archive
-                        try:
-                            pgn = game["pgn"]
+                            # Parse each game from the archive
+                            try:
+                                pgn = game["pgn"]
 
-                            parse_pgn(moves_history, pgn)
-                        except KeyError:
-                            pass
+                                parse_pgn(moves_history, pgn)
+                            except KeyError:
+                                pass
         return moves_history
     else:
         return None
