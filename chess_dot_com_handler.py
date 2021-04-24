@@ -29,15 +29,9 @@ def get_chess_dot_com_moves_history(username: str, color: str, rating: int,
                 response = session.get(url)
                 response = response.json()
 
-                # games = response["games"]
                 games.extend(response["games"])
 
-            filtered_games = (game for game in games
-                                if is_filter_satisfied(game, username,
-                                                       color, rating,
-                                                       time_class, time_control))
-
-            for game in filtered_games:
+            for game in filter_games(games, username, color, rating, time_class, time_control):
                 # Parse each game from the archive
                 try:
                     pgn = game["pgn"]
@@ -50,33 +44,35 @@ def get_chess_dot_com_moves_history(username: str, color: str, rating: int,
     return None
 
 
-def is_filter_satisfied(game, username, color, rating, time_class, time_control):
+def filter_games(games, username, color, rating, time_class, time_control):
     """
-    Returns True if all filtering conditions are satisfied,
-    returns False otherwise
+    Generator that yields the next game the respect the filtering options
     """
-    # Filter chess variations
-    if game["rules"] == "chess":
+    for game in games:
+        # Filter chess variations
+        if game["rules"] != "chess":
+            continue
+
         # Filter by color
-        if game[color]["username"] == username:
-            # Filter by rating
-            if rating:
-                if int(game[color]["rating"]) < rating:
-                    return False
+        if game[color]["username"] != username:
+            continue
 
-            # Filter by time class
-            if time_class:
-                if game["time_class"] != time_class:
-                    return False
+        # Filter by rating
+        if rating:
+            if int(game[color]["rating"]) < rating:
+                continue
 
-            # Filter by time control
-            if time_control:
-                if game["time_control"] != time_control:
-                    return False
+        # Filter by time class
+        if time_class:
+            if game["time_class"] != time_class:
+                continue
 
-            return True
+        # Filter by time control
+        if time_control:
+            if game["time_control"] != time_control:
+                continue
 
-    return False
+        yield game
 
 
 def get_monthly_archives(username):
