@@ -6,8 +6,8 @@ from tempfile import mkdtemp
 from flask import Flask, render_template, request, session
 from flask_session import Session
 from helpers import calculate_percentages, order_dict
-from chess_dot_com_helpers import get_chess_dot_com_moves_history
-from lichess_helpers import get_lichess_moves_history
+from chess_dot_com_handler import get_chess_dot_com_moves_history
+from lichess_handler import get_lichess_moves_history
 
 # Configure application
 app = Flask(__name__)
