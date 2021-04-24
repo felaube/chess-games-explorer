@@ -33,12 +33,9 @@ def get_chess_dot_com_moves_history(username: str, color: str, rating: int,
                 games.extend(response["games"])
 
             filtered_games = (game for game in games
-                                if is_filter_satisfied(game,
-                                                       username,
-                                                       color,
-                                                       rating,
-                                                       time_class,
-                                                       time_control))
+                                if is_filter_satisfied(game, username,
+                                                       color, rating,
+                                                       time_class, time_control))
 
             for game in filtered_games:
                 # Parse each game from the archive
