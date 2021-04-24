@@ -1,5 +1,10 @@
-import requests
+"""
+Implement the functions responsible for handling the Lichess API requests
+and building the moves history obtained from those requests.
+"""
 import json
+import requests
+from helpers import increment_move_in_moves_dict, create_move_in_moves_dict
 
 
 def get_lichess_moves_history(username, color, rating, time_class, time_control):
@@ -44,7 +49,7 @@ def get_lichess_moves_history(username, color, rating, time_class, time_control)
     for game in games:
         # Filter by rating
         if rating:
-            if int(game["players"][color]["rating"]) < int(rating):
+            if int(game["players"][color]["rating"]) < rating:
                 continue
 
         # Filter by time control
@@ -66,7 +71,7 @@ def get_lichess_moves_history(username, color, rating, time_class, time_control)
 
         parse_pgn(moves_history, game["moves"], result)
 
-    return moves_history    
+    return moves_history
 
 
 def parse_pgn(moves_dict, pgn, result):
@@ -82,19 +87,9 @@ def parse_pgn(moves_dict, pgn, result):
     for move in moves:
         # Check if this move was already played in this position
         if move in current_dict["next_moves"]:
-            current_dict["next_moves"][move]["count"] += 1
-            if result == 1:
-                current_dict["next_moves"][move]["white_wins"] += 1
-            elif result == 0:
-                current_dict["next_moves"][move]["black_wins"] += 1
+            increment_move_in_moves_dict(current_dict, move, result)
         else:
-            # Create new "node" for the move in this position
-            if result == 1:
-                current_dict["next_moves"][move] = {"count": 1, "white_wins": 1, "black_wins": 0, "next_moves": {}}
-            elif result == 0:
-                current_dict["next_moves"][move] = {"count": 1, "white_wins": 0, "black_wins": 1, "next_moves": {}}
-            else:
-                current_dict["next_moves"][move] = {"count": 1, "white_wins": 0, "black_wins": 0, "next_moves": {}}
+            create_move_in_moves_dict(current_dict, move, result)
 
         # Update current_dict
         current_dict = current_dict["next_moves"][move]
