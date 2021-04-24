@@ -2,12 +2,13 @@ import requests
 import re
 
 
-def get_chess_dot_com_moves_history(username, color, rating, time_class, time_control):
+def get_chess_dot_com_moves_history(username, color, rating,
+                                    time_class, time_control):
     """
-    Construct the moves history from chess dot com archives
+    Construct the moves history from chess.com archives
     """
 
-    archives_list = get_archives(username)
+    archives_list = get_monthly_archives(username)
 
     if archives_list is not None:
         moves_history = {"next_moves": {}}
@@ -54,9 +55,13 @@ def get_chess_dot_com_moves_history(username, color, rating, time_class, time_co
         return None
 
 
-def get_archives(username):
+def get_monthly_archives(username):
     """
-    Get a list of all monthly archives available for the player
+    Make a request to chess.com API to obtain a list
+    containing the list of monthly archives available for the player.
+
+    The monthly archive is a url to which an API request must be made
+    to get the games played in that month.
     """
 
     # Get array of monthly archives available for this player
@@ -79,7 +84,7 @@ def parse_pgn(moves_dict, pgn, current_move=1):
     """
 
     current_dict = moves_dict
-    white_move = True
+    white_to_move = True
 
     # Get result of the game to calculate the winning percentage later
     m = re.search(r"\[Result \"(?P<result>[1, /, 2, 0]+-[1, /, 2, 0]+)\"]", pgn)
@@ -93,24 +98,25 @@ def parse_pgn(moves_dict, pgn, current_move=1):
         # It was a draw
         result = 0.5
 
-    # Parse one move at a time iteratively
+    # Parse one move at a time, iteratively
     while True:
-        current_dict = parse_move(current_dict, pgn, current_move, white_move, result)
+        current_dict = parse_move(current_dict, pgn, current_move,
+                                  white_to_move, result)
 
         if current_dict is not None:
             # Update current move and white/black move variable
-            if not white_move:
+            if not white_to_move:
                 current_move += 1
 
-            white_move = not white_move
+            white_to_move = not white_to_move
 
         else:
             break
 
 
-def parse_move(moves_dict, pgn, current_move, white_move, result):
+def parse_move(moves_dict, pgn, current_move, white_to_move, result):
 
-    if white_move:
+    if white_to_move:
         # Find current move by white
         m = re.search(str(current_move)+r"\. (?P<move>[a-z, A-Z, 1-9, +, #, =, -]+) {", pgn)
     else:
