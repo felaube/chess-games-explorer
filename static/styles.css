@@ -131,12 +131,13 @@ a.logo
 
 .logo h3 i
 {
-    padding-right: 5px;
+    padding-right: 10px;
 }
 
 .logo i
 {
     color: green;
+    vertical-align: top;
 }
 
 a.filtering-options
